@@ -2,11 +2,14 @@
 
 
 // Entry file for Markbind project
+const cheerio = require('cheerio');
 const clear = require('clear');
+const findUp = require('find-up');
 const fs = require('fs-extra-promise');
 const path = require('path');
 const Promise = require('bluebird');
 const program = require('commander');
+const nunjucks = require('nunjucks');
 const htmlBeautify = require('js-beautify').html;
 const liveServer = require('live-server');
 const chokidar = require('chokidar');
@@ -19,6 +22,9 @@ const MarkBind = require('./lib/markbind/lib/parser');
 const CLI_VERSION = require('./package.json').version;
 
 const ACCEPTED_COMMANDS = ['version', 'include', 'render', 'init', 'build', 'serve', 'deploy'];
+
+const SITE_CONFIG_NAME = 'site.json';
+const USER_VARIABLES_PATH = '_markbind/variables.md';
 
 const markbinder = new MarkBind();
 
@@ -41,7 +47,35 @@ program
   .description('process all the fragment include in the given file')
   .option('-o, --output <path>', 'output file path')
   .action((file, options) => {
-    markbinder.includeFile(path.resolve(process.cwd(), file))
+    const config = {};
+    const siteConfigPath = findUp.sync(SITE_CONFIG_NAME);
+    config.rootPath = path.dirname(siteConfigPath);
+    config.baseUrlMap = {};
+    config.baseUrlMap[config.rootPath] = true;
+    config.userDefinedVariablesMap = {};
+
+    const userDefinedVariables = {};
+    let content;
+    try {
+      const userDefinedVariablesPath = path.resolve(config.rootPath, USER_VARIABLES_PATH);
+      content = fs.readFileSync(userDefinedVariablesPath, 'utf8');
+    } catch (e) {
+      content = '';
+      logger.warn(e.message);
+    }
+    const $ = cheerio.load(content);
+    $.root().children().each(function () {
+      const id = $(this).attr('id');
+      const html = $(this).html();
+      userDefinedVariables[id] = html;
+    });
+
+    // This is to prevent the first nunjuck call from converting {{baseUrl}} to an empty string
+    // and let the baseUrl value be injected later.
+    userDefinedVariables.baseUrl = '{{baseUrl}}';
+    config.userDefinedVariablesMap[config.rootPath] = userDefinedVariables;
+
+    markbinder.includeFile(path.resolve(process.cwd(), file), config)
       .then((result) => {
         if (options.output) {
           const outputPath = path.resolve(process.cwd(), options.output);
@@ -64,9 +98,17 @@ program
   .description('render the given file')
   .option('-o, --output <path>', 'output file path')
   .action((file, options) => {
-    markbinder.renderFile(path.resolve(process.cwd(), file))
+    const config = {};
+    const siteConfigPath = findUp.sync(SITE_CONFIG_NAME);
+    config.rootPath = path.dirname(siteConfigPath);
+    config.baseUrlMap = {};
+    config.baseUrlMap[config.rootPath] = true;
+    markbinder.renderFile(path.resolve(process.cwd(), file), config)
       .then((result) => {
-        const formattedResult = htmlBeautify(result, { indent_size: 2 });
+        const baseUrl = config.rootPath;
+        const hostBaseUrl = baseUrl;
+        const formattedResult = nunjucks.renderString(htmlBeautify(result, { indent_size: 2 }),
+                                                      { baseUrl, hostBaseUrl });
         if (options.output) {
           const outputPath = path.resolve(process.cwd(), options.output);
           fs.outputFileSync(outputPath, formattedResult);
