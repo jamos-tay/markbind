@@ -1,0 +1,19 @@
+{
+  "baseUrl": "",
+  "pages": [
+    {
+      "src": "index.md",
+      "title": "Hello World"
+    }
+  ],
+  "ignore": [
+    "_site/*",
+    "*.json",
+    "*.md"
+  ],
+"deploy": {
+        "message": "Site Update.",
+        "repo": "https://github.com/jamos-tay/markbind.git",
+        "branch": "gh-pages"
+    }
+}
