@@ -14,6 +14,6 @@
 "deploy": {
         "message": "Site Update.",
         "repo": "https://github.com/jamos-tay/markbind.git",
-        "branch": "gh-pages"
+        "branch": "markbind-test"
     }
 }
