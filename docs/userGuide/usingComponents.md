@@ -205,4 +205,46 @@ If you want to include a keyword without rendering it to the page, add `d-none` 
 This is good for catching <span class="keyword">regressions</span>
 ```
 
+# Using Tags
+
+You can use tags allow you to selectively display or hide certain elements on the compiled static site.
+
+A tag is an attribute attached to any HTML element. A tag is specified by the `tag` attribute, and follows a format of `type--name`. For example:
+
+```html
+# Welcome to my site
+
+<p tag="language--english">Hello</p>
+<div tag="language--french">Bonjour</div>
+<span tag="language--spanish">Hola</span>
+```
+
+Tagged elements to include are specified in the `site.json` file, under the `include` option:
+
+```
+{
+  ...
+  {
+    "include" : {
+      "language" : ["english"]
+    }
+  }
+}
+```
+
+When compiled, only elements that match tags specified in the `site.json` files will be displayed. All other tagged elements will be hidden. In this case, only the element with the `language--english` tag will be displayed. This is helpful when creating multiple versions of a page without creating multiple copies.
+
+Alternatively you can also specify tags for a page individually in the page's `frontmatter`:
+
+```
+<frontmatter>
+  title: "Hello World"
+  include: {
+    "language" : ["english"]
+  }
+</frontmatter>
+```
+
+Tags in the `frontmatter` will take precedence over the ones in `site.json`.
+
 </div>

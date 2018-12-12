@@ -29,6 +29,10 @@
         "included-heading": "Included Heading | Keyword with included heading",
         "heading-with-nested-keyword": "Heading with nested keyword | nested keyword",
         "heading-with-hidden-keyword": "Heading with hidden keyword | invisible keyword",
+        "div-with-shown-tag": "Div with shown tag",
+        "div-with-shown-2-tag": "Div with shown-2 tag",
+        "div-with-shown-on-overwrite-tag": "Div with shown on overwrite tag",
+        "div-with-hidden-tag": "Div with hidden tag",
         "normal-include": "Normal include",
         "establishing-requirements": "Establishing Requirements",
         "brainstorming": "Brainstorming",
@@ -55,7 +59,13 @@
       "siteNav": "site-nav.md",
       "head": "myCustomHead.md, myCustomHead2.md",
       "layout": "default",
-      "src": "index.md"
+      "src": "index.md",
+      "includedTags": {
+        "tag": [
+          "shown",
+          "shown-2"
+        ]
+      }
     },
     {
       "headings": {
@@ -64,7 +74,35 @@
       "title": "Hello World",
       "head": "overwriteLayoutHead.md",
       "src": "testLayouts.md",
-      "layout": "testLayout"
+      "layout": "testLayout",
+      "includedTags": {
+        "tag": [
+          "shown",
+          "shown-2"
+        ]
+      }
+    },
+    {
+      "headings": {
+        "overwrites-tags-in-sitejson": "Overwrites tags in site.json",
+        "div-with-shown-tag": "Div with shown tag",
+        "div-with-shown-2-tag": "Div with shown-2 tag",
+        "div-with-shown-on-overwrite-tag": "Div with shown on overwrite tag",
+        "div-with-hidden-tag": "Div with hidden tag"
+      },
+      "title": "Hello World",
+      "include": {
+        "tag": [
+          "shown-on-overwrite"
+        ]
+      },
+      "src": "testTags.md",
+      "layout": "default",
+      "includedTags": {
+        "tag": [
+          "shown-on-overwrite"
+        ]
+      }
     },
     {
       "headings": {
@@ -74,7 +112,13 @@
       },
       "title": "Open Bugs",
       "src": "bugs/index.md",
-      "layout": "default"
+      "layout": "default",
+      "includedTags": {
+        "tag": [
+          "shown",
+          "shown-2"
+        ]
+      }
     },
     {
       "headings": {

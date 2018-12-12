@@ -44,6 +44,8 @@ layout: default
 # Heading with hidden keyword
 <span class="keyword d-none">invisible keyword</span>
 
+<include src="testTagDivs.md" />
+
 # Normal include
 <include src="requirements/EstablishingRequirements.md" />
 
